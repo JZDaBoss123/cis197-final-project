@@ -10,8 +10,8 @@ router.get("/todos", (req, res) => {
     if (todos) {
       ret = "";
       todos.forEach(function (todo) {
-        const { todoText, author } = todo;
-        ret += `user ${author} added: ${todoText}\n`;
+        const { todoText, author, done } = todo;
+        ret += `user ${author} added: ${todoText}. Completed: ${done}\n`;
       });
       res.send(ret);
     } else {
@@ -22,25 +22,29 @@ router.get("/todos", (req, res) => {
 
 router.post("/todos/add", isAuthenticated, async (req, res) => {
   const { todoText, author } = req.body;
-  const done = false
+  const done = false;
 
-  try {
-    //author is req.session.username
-    await Todo.create({ todoText, author, done });
-    res.send("question created succesfully");
-  } catch {
-    res.send("failure occurs when creating the question");
+  if (todoText && author) {
+    try {
+      //author is req.session.username
+      await Todo.create({ todoText, author, done });
+      res.send("todo created succesfully");
+    } catch {
+      res.send("failure occurs when creating the todo");
+    }
+  } else {
+    res.send("trying to create blank todo");
   }
 });
 
-router.post("/todos/delete", isAuthenticated, async (req, res) => {
+router.post("/todos/complete", isAuthenticated, async (req, res) => {
   const { _id } = req.body;
-  const done = true;
-
+  const update = {done : true};
+  console.log (_id);
   try {
-    await Question.findOneAndUpdate(
+    await Todo.findOneAndUpdate(
       { _id },
-      { done },
+      update,
       { useFindAndModify: true }
     );
     res.send("successfully marked todo as completed");
