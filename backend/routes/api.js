@@ -41,7 +41,6 @@ router.post("/todos/add", isAuthenticated, async (req, res) => {
 router.post("/todos/complete", isAuthenticated, async (req, res) => {
   const { _id } = req.body;
   const update = {done : true};
-  console.log (_id);
   try {
     await Todo.findOneAndUpdate(
       { _id },
@@ -51,6 +50,34 @@ router.post("/todos/complete", isAuthenticated, async (req, res) => {
     res.send("successfully marked todo as completed");
   } catch {
     res.send("failure occurs when marking todo as completed");
+  }
+});
+
+router.post("/todos/incomplete", isAuthenticated, async (req, res) => {
+  const { _id } = req.body;
+  const update = {done : false};
+  try {
+    await Todo.findOneAndUpdate(
+      { _id },
+      update,
+      { useFindAndModify: true }
+    );
+    res.send("successfully marked todo as incomplete");
+  } catch {
+    res.send("failure occurs when marking todo as incomplete");
+  }
+});
+
+router.post("/todos/delete", isAuthenticated, async (req, res) => {
+  const { _id } = req.body;
+  try {
+    await Todo.findOneAndRemove(
+      { _id },
+      { useFindAndModify: true }
+    );
+    res.send("successfully deleted todo as completed");
+  } catch {
+    res.send("failure occurs when deleting todo");
   }
 });
 

@@ -1,5 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+import s from "styled-components";
+
+const Incomplete = s.p`
+    text-align: center;
+    background-color: green;
+`;
+
+const Complete = s.p`
+    text-align: center;
+    background-color: grey;
+`;
 
 const Posts = (props) => {
   const { item } = props;
@@ -13,21 +24,41 @@ const Posts = (props) => {
     }
   };
 
+  const markIncomplete = async () => {
+    try {
+      await axios.post("/api/todos/incomplete", { _id });
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const deleteTodo = async () => {
+    try {
+      await axios.post("/api/todos/delete", { _id });
+    } catch (e) {
+      alert(e);
+    }
+  };
+
   if (done) {
     return (
       <>
-        <p>hi</p>
+        <Complete>
+        <div onClick={() => markIncomplete()}>
+            <p>{text} by {author}</p>
+            <button onClick = {() => deleteTodo()}> DELETE </button>
+          </div>
+        </Complete>
       </>
     );
   } else {
     return (
       <>
-        <div onClick = {() => markComplete()}>
-          <p>{text}</p>
-          <ul>
-            <li>Added by {author} </li>
-          </ul>
-        </div>
+        <Incomplete>
+          <div onClick={() => markComplete()}>
+            <p>{text} by {author}</p>
+          </div>
+        </Incomplete>
       </>
     );
   }
