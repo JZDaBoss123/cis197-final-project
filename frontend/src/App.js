@@ -7,8 +7,16 @@ import {
   Link,
   useHistory,
 } from "react-router-dom";
+import socketIOClient from "socket.io-client";
+import Todos from "./Todos";
+
+const socket = socketIOClient.connect();
 
 export default function App() {
+  socket.on("tester", (data) => {
+    console.log(data);
+  });
+
   return (
     <Router>
       <div>
@@ -29,11 +37,12 @@ export default function App() {
 }
 
 function Home() {
+  //can only view todos once logged in.
   const [logged, setLogged] = useState(false);
   const [user, setUser] = useState("");
-  const [questions, setQuestions] = useState([]);
-  const [asking, setAsking] = useState(false);
-  const [qText, setText] = useState("");
+  const [todos, setTodos] = useState([]);
+  const [adding, setAdding] = useState(false);
+  const [todoText, setTodoText] = useState("");
   let history = useHistory();
 
   useEffect(async () => {
@@ -43,14 +52,11 @@ function Home() {
     } = response;
     setLogged(status);
     setUser(username);
-    const intervalID = setInterval(async () => {
-      const res = await axios.get("/api/questions");
-      const {
-        data: { array },
-      } = res;
-      setQuestions(array);
-    }, 2000);
-    return () => clearInterval(intervalID);
+    const res = await axios.get("/api/todos");
+    const {
+      data: { array },
+    } = res;
+    setTodos(array);
   }, []);
 
   const logout = async () => {
@@ -62,35 +68,33 @@ function Home() {
     }
   };
 
-  const askQ = async () => {
+  const addTodo = async () => {
     try {
-      await axios.post("/api/questions/add", {
-        questionText: qText,
+      await axios.post("/api/todos/add", {
+        todoText: todoText,
         author: user,
       });
-      setAsking(false);
+      setAdding(false);
     } catch (e) {
       alert(e);
     }
   };
 
   if (logged) {
-    if (asking) {
+    if (adding) {
       return (
         <div>
           <h2>Home</h2>
           <h3>Welcome {user}</h3>
           <button onClick={() => logout()}> Log Out </button>
-          <h3> Questions: </h3>
-          <Wrapper>
-            <h3>Text: </h3>
-            <input onChange={(e) => setText(e.target.value)} />
-            <button onClick={() => askQ()}> Submit </button>
-            <button onClick={() => setAsking(false)}> Cancel </button>
-          </Wrapper>
+          <h3> Todos: </h3>
+          <p> Please enter to-do below: </p>
+          <input onChange={(e) => setTodoText(e.target.value)} />
+          <button onClick={() => addTodo()}> Submit </button>
+          <button onClick={() => setAsking(false)}> Cancel </button>
           <ul>
-            {questions.map((item) => (
-              <Posts item={item} />
+            {todos.map((item) => (
+              <Todos item={item} />
             ))}
           </ul>
         </div>
@@ -101,13 +105,11 @@ function Home() {
           <h2>Home</h2>
           <h3>Welcome {user}</h3>
           <button onClick={() => logout()}> Log Out </button>
-          <h3> Questions: </h3>
-          <Wrapper>
-            <button onClick={() => setAsking(true)}> Ask a question! </button>
-          </Wrapper>
+          <h3> Todos: </h3>
+          <button onClick={() => setAdding(true)}> Add a todo! </button>
           <ul>
-            {questions.map((item) => (
-              <Posts item={item} />
+            {todos.map((item) => (
+              <Todos item={item} />
             ))}
           </ul>
         </div>
@@ -117,13 +119,11 @@ function Home() {
     return (
       <div>
         <h2>Home</h2>
+        <h3>
+          You are currently not logged in, please press the button below to log
+          in.
+        </h3>
         <Link to="/login">Log In</Link>
-        <h3> Questions: </h3>
-        <ul>
-          {questions.map((item) => (
-            <PostsView item={item} />
-          ))}
-        </ul>
       </div>
     );
   }
@@ -137,7 +137,7 @@ function Signup() {
   const signup = async () => {
     try {
       await axios.post("/account/signup", { username, password });
-      history.push("/");
+      history.push("/login");
     } catch (e) {
       alert(e);
     }
@@ -145,11 +145,8 @@ function Signup() {
 
   return (
     <>
-      <ul>
-        <li>
-          <Link to="/login">Log In</Link>
-        </li>
-      </ul>
+      <h3>If you already have an account, click below to login.</h3>
+      <Link to="/login">Log In</Link>
       <h2>Username</h2>
       <input onChange={(e) => setUsername(e.target.value)} />
       <br />
@@ -186,11 +183,8 @@ function Login() {
 
   return (
     <>
-      <ul>
-        <li>
-          <Link to="/signup">Sign Up</Link>
-        </li>
-      </ul>
+      <h3>If you don't have an account, click below to create an account.</h3>
+      <Link to="/signup">Sign Up</Link>
       <h2>Username</h2>
       <input onChange={(e) => setUsername(e.target.value)} />
       <br />

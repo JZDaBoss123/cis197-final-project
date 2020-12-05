@@ -22,9 +22,9 @@ router.post('/login', (req, res) => {
     if (user) {
       req.session.username = username
       req.session.password = password
-      res.send(`logged in`)
+      res.json({code : "success"})
     } else {
-      res.send(`failed to log in`)
+      res.json({code : "fail"})
     }
   })
 })
@@ -33,6 +33,18 @@ router.post('/logout', isAuthenticated, (req, res) => {
   req.session.username = ''
   req.session.password = ''
   res.send('user logged out')
+})
+
+router.post('/isLogged', async (req, res) => {
+  if (req.session.username === null || req.session.password === null) {
+    res.json({in : false, user : ""})
+  } else {
+    if (req.session.username !== "" && req.session.password !== "") {
+      res.json({in : true, user : req.session.username})
+    } else {
+      res.json({in : false, user : ""})
+    }
+  }
 })
 
 module.exports = router

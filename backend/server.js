@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const cookieSession = require("cookie-session");
-
 const accountRouter = require("./routes/account");
 const apiRouter = require("./routes/api");
+const path = require('path');
+const socketIO = require('socket.io')
+const http = require('http')
 
 const app = express();
+const server = http.createServer(app)
+const io = socketIO(server)
+
 const MONGO_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/cis197-final";
 
@@ -14,8 +19,23 @@ mongoose.connect(MONGO_URI, {
   useUnifiedTopology: true,
 });
 
+
+io.on('connection', socket => {
+  console.log('a user has connected')
+
+  socket.on('disconnect', () => {
+    console.log('user has disconnected')
+  })
+
+  socket.on('test', data => {
+    console.log(data)
+    socket.emit('tester', 'hello!')
+  })
+})
+
 app.use(express.static("dist"));
 app.use(express.json());
+
 
 app.use(
   cookieSession({

@@ -6,16 +6,17 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const router = express.Router();
 
 router.get("/todos", (req, res) => {
+  todoArray = []
   Todo.find({}, (err, todos) => {
     if (todos) {
-      ret = "";
       todos.forEach(function (todo) {
-        const { todoText, author, done } = todo;
-        ret += `user ${author} added: ${todoText}. Completed: ${done}\n`;
+        const { todoText, author, done, _id } = todo;
+        const dict = {text : todoText, author : author, done: done, _id : _id}
+        todoArray.push(dict)
       });
-      res.send(ret);
+      res.json({array: todoArray})
     } else {
-      res.send(`no questions yet`);
+      res.send(`no todos yet`);
     }
   });
 });
