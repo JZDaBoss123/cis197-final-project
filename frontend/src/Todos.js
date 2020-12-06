@@ -13,8 +13,9 @@ const Complete = s.p`
 `;
 
 const Posts = (props) => {
-  const { item } = props;
+  const { item, socket } = props;
   const { text, author, done, _id } = item;
+
 
   const markComplete = async () => {
     try {
@@ -22,6 +23,7 @@ const Posts = (props) => {
     } catch (e) {
       alert(e);
     }
+    socket.emit('change', 'marked complete')
   };
 
   const markIncomplete = async () => {
@@ -30,6 +32,7 @@ const Posts = (props) => {
     } catch (e) {
       alert(e);
     }
+    socket.emit('change', 'marked incomplete')
   };
 
   const deleteTodo = async () => {
@@ -38,6 +41,7 @@ const Posts = (props) => {
     } catch (e) {
       alert(e);
     }
+    socket.emit('change', 'deleted')
   };
 
   if (done) {

@@ -56,9 +56,9 @@ io.on('connection', socket => {
     console.log('user has disconnected')
   })
 
-  socket.on('test', data => {
+  socket.on('change', data => {
     console.log(data)
-    socket.emit('tester', 'hello!')
+    socket.emit('update', 'test')
   })
 })
 

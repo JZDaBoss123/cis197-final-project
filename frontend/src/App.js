@@ -13,9 +13,6 @@ import Todos from "./Todos";
 const socket = socketIOClient.connect();
 
 export default function App() {
-  socket.on("tester", (data) => {
-    console.log(data);
-  });
 
   return (
     <Router>
@@ -43,6 +40,7 @@ function Home() {
   const [todos, setTodos] = useState([]);
   const [adding, setAdding] = useState(false);
   const [todoText, setTodoText] = useState("");
+  const [fetch, setFetch] = useState(false)
   let history = useHistory();
 
   useEffect(async () => {
@@ -57,7 +55,11 @@ function Home() {
       data: { array },
     } = res;
     setTodos(array);
-  }, []);
+  }, [fetch]);
+
+  socket.on("update", (data) => {
+    setFetch(!fetch)
+  });
 
   const logout = async () => {
     try {
@@ -78,6 +80,7 @@ function Home() {
     } catch (e) {
       alert(e);
     }
+    socket.emit("change", "added todo");
   };
 
   if (logged) {
@@ -94,7 +97,7 @@ function Home() {
           <button onClick={() => setAsking(false)}> Cancel </button>
           <ul>
             {todos.map((item) => (
-              <Todos item={item} />
+              <Todos item={item} socket = {socket} />
             ))}
           </ul>
         </div>
@@ -109,7 +112,7 @@ function Home() {
           <button onClick={() => setAdding(true)}> Add a todo! </button>
           <ul>
             {todos.map((item) => (
-              <Todos item={item} />
+              <Todos item={item} socket = {socket} />
             ))}
           </ul>
         </div>
