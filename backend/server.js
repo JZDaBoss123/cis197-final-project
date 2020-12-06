@@ -58,7 +58,7 @@ io.on('connection', socket => {
 
   socket.on('change', data => {
     console.log(data)
-    socket.emit('update', 'test')
+    io.emit('update', 'test')
   })
 })
 
