@@ -2,8 +2,8 @@ const express = require("express");
 const Todo = require("../models/todos");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 
-const accountSid = "ACed5c638cdc16064ccf9be937ac79952a";
-const authToken = "602913d9377908baf78292956482d412";
+const accountSid = "rescinded";
+const authToken = "rescinded";
 const client = require("twilio")(accountSid, authToken);
 
 const router = express.Router();
