@@ -13,7 +13,6 @@ import Todos from "./Todos";
 const socket = socketIOClient.connect();
 
 export default function App() {
-
   return (
     <Router>
       <div>
@@ -40,7 +39,8 @@ function Home() {
   const [todos, setTodos] = useState([]);
   const [adding, setAdding] = useState(false);
   const [todoText, setTodoText] = useState("");
-  const [fetch, setFetch] = useState(false)
+  const [fetch, setFetch] = useState(false);
+  const [number, setNumber] = useState("");
   let history = useHistory();
 
   useEffect(async () => {
@@ -58,13 +58,24 @@ function Home() {
   }, [fetch]);
 
   socket.on("update", (data) => {
-    setFetch(!fetch)
+    setFetch(!fetch);
   });
 
   const logout = async () => {
     try {
       await axios.post("/account/logout");
       history.push("/login");
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const sendMsg = async () => {
+      console.log(number)
+    try {
+      await axios.post("/api/todos/send", {
+        number: number,
+      });
     } catch (e) {
       alert(e);
     }
@@ -97,29 +108,35 @@ function Home() {
           <h3> Todos: </h3>
           <ul>
             {todos.map((item) => (
-              <Todos item={item} socket = {socket} />
+              <Todos item={item} socket={socket} />
             ))}
           </ul>
+          <p> Please enter phone number below: </p>
+          <input onChange={(e) => setNumber(e.target.value)} />
+          <button onClick={() => sendMsg()}> Submit </button>
         </div>
       );
     } else {
       return (
-          <>
-        <div>
-          <h2>Home</h2>
-          <h3>Welcome {user}</h3>
-          <button onClick={() => logout()}> Log Out </button>
+        <>
+          <div>
+            <h2>Home</h2>
+            <h3>Welcome {user}</h3>
+            <button onClick={() => logout()}> Log Out </button>
           </div>
           <div>
-          <button onClick={() => setAdding(true)}> Add a todo! </button>
+            <button onClick={() => setAdding(true)}> Add a todo! </button>
           </div>
           <h3> Todos: </h3>
           <ul>
             {todos.map((item) => (
-              <Todos item={item} socket = {socket} />
+              <Todos item={item} socket={socket} />
             ))}
           </ul>
-          </>
+          <p> Please enter phone number below: </p>
+          <input onChange={(e) => setNumber(e.target.value)} />
+          <button onClick={() => sendMsg()}> Submit </button>
+        </>
       );
     }
   } else {

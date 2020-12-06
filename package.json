@@ -37,7 +37,8 @@
     "socket.io": "^3.0.3",
     "socket.io-client": "^3.0.3",
     "socketio": "^1.0.0",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.1",
+    "twilio": "^3.53.0"
   },
   "browserslist": [
     "last 3 and_chr versions",
