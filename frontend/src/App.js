@@ -90,11 +90,11 @@ function Home() {
           <h2>Home</h2>
           <h3>Welcome {user}</h3>
           <button onClick={() => logout()}> Log Out </button>
-          <h3> Todos: </h3>
           <p> Please enter to-do below: </p>
           <input onChange={(e) => setTodoText(e.target.value)} />
           <button onClick={() => addTodo()}> Submit </button>
-          <button onClick={() => setAsking(false)}> Cancel </button>
+          <button onClick={() => setAdding(false)}> Cancel </button>
+          <h3> Todos: </h3>
           <ul>
             {todos.map((item) => (
               <Todos item={item} socket = {socket} />
@@ -104,18 +104,22 @@ function Home() {
       );
     } else {
       return (
+          <>
         <div>
           <h2>Home</h2>
           <h3>Welcome {user}</h3>
           <button onClick={() => logout()}> Log Out </button>
-          <h3> Todos: </h3>
+          </div>
+          <div>
           <button onClick={() => setAdding(true)}> Add a todo! </button>
+          </div>
+          <h3> Todos: </h3>
           <ul>
             {todos.map((item) => (
               <Todos item={item} socket = {socket} />
             ))}
           </ul>
-        </div>
+          </>
       );
     }
   } else {

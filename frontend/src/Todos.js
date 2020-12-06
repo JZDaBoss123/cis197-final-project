@@ -4,12 +4,12 @@ import s from "styled-components";
 
 const Incomplete = s.p`
     text-align: center;
-    background-color: green;
+    background-color: grey;
 `;
 
 const Complete = s.p`
     text-align: center;
-    background-color: grey;
+    background-color: green;
 `;
 
 const Posts = (props) => {
