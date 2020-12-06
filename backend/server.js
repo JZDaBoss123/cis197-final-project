@@ -19,20 +19,6 @@ mongoose.connect(MONGO_URI, {
   useUnifiedTopology: true,
 });
 
-
-io.on('connection', socket => {
-  console.log('a user has connected')
-
-  socket.on('disconnect', () => {
-    console.log('user has disconnected')
-  })
-
-  socket.on('test', data => {
-    console.log(data)
-    socket.emit('tester', 'hello!')
-  })
-})
-
 app.use(express.static("dist"));
 app.use(express.json());
 
@@ -63,6 +49,19 @@ app.get("*", (_, res) => {
   res.sendFile(path.join(__dirname, "../dist/index.html"));
 });
 
-app.listen(3000, () => {
+io.on('connection', socket => {
+  console.log('a user has connected')
+
+  socket.on('disconnect', () => {
+    console.log('user has disconnected')
+  })
+
+  socket.on('test', data => {
+    console.log(data)
+    socket.emit('tester', 'hello!')
+  })
+})
+
+server.listen(3000, () => {
   console.log("listening on 3000");
 });
