@@ -15,7 +15,9 @@ router.post("/todos/send", (req, res) => {
     if (todos) {
       todos.forEach(function (todo) {
         const { todoText, author, done, _id } = todo;
-        ret += `${todoText}: ${done}\n`;
+        if (!done) {
+          ret += `\n${todoText}: added by ${author}`;
+        }
       });
       res.json({ string: ret });
       client.messages

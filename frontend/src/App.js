@@ -111,7 +111,7 @@ function Home() {
               <Todos item={item} socket={socket} />
             ))}
           </ul>
-          <p> Please enter phone number below: </p>
+          <p> Please enter phone number below to get texted your incomplete todos: </p>
           <input onChange={(e) => setNumber(e.target.value)} />
           <button onClick={() => sendMsg()}> Submit </button>
         </div>
@@ -133,7 +133,7 @@ function Home() {
               <Todos item={item} socket={socket} />
             ))}
           </ul>
-          <p> Please enter phone number below: </p>
+          <p> Please enter phone number below to get texted your incomplete todos: </p>
           <input onChange={(e) => setNumber(e.target.value)} />
           <button onClick={() => sendMsg()}> Submit </button>
         </>
